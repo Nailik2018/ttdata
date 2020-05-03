@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class DataClean():
 
     def __init__(self):

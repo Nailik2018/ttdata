@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import urllib3
 
 class CSVDownloadOfWebsite():

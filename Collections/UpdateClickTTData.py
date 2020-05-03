@@ -1,6 +1,15 @@
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
+
 from Collections.CSVDownloadOfWebsite import CSVDownloadOfWebsite
 from Collections.helpfunctions.DataClean import DataClean
+from Collections.Database import Database
+from unidecode import unidecode
+
+import json, ast
+
+import sys
+#reload(sys)
+#sys.setdefaultencoding("utf-8")
 
 class UpdateClickTTData():
 
@@ -23,10 +32,60 @@ class UpdateClickTTData():
         total_males = int(len(male_players)) - 1
         total_females = int(len(female_players)) - 1
 
-        print(total_males)
-        print(total_females)
+        db = Database()
+        db.connection()
 
-        print("-" * 100)
+        #current_club = ("Rio-Star Muttenz",)
 
-        print(male_players)
-        print(female_players)
+        #is_club_in_table_club = db.sqlstatement("SELECT * FROM club WHERE clubname = %s", current_club)
+
+        for male_player in male_players:
+
+            current_club = (male_player['club'],)
+
+            is_current_club_in_table_club = db.sqlstatement("SELECT * FROM club WHERE clubname = %s", current_club)
+
+            #encoded_club = male_player['club'].decode('utf-8')
+
+            c = male_player['club']
+            d = c.encode("utf-8")
+            u = {u'club': u'' + c}
+            e = format(c)
+
+            print(c)
+            print(d)
+            print(d.decode('utf-8'))
+            print(str(ast.literal_eval(json.dumps(u['club']))))
+            print(unidecode(c))
+            stdout_encoding = sys.stdout.encoding
+            print(stdout_encoding)
+            stdout_encoding = sys.stdout.encoding or sys.getfilesystemencoding()
+            print(stdout_encoding)
+
+            #f = str(c.decode('utf-8'), 'utf-8')
+            #print(f)
+
+
+
+
+            print("-" * 100)
+
+
+            if not is_current_club_in_table_club:
+
+                #c = male_player['club'].encode('utf-8')
+                #print(c)
+
+                #print(unichr(241).encode('utf8'))
+
+                current_club = ('Null', male_player['club'])
+                #current_club = ('Null', encoded_club)
+                insert_statement = """INSERT INTO club (id, clubname) VALUES (%s, %s)"""
+                db.insertstatement3(insert_statement, current_club)
+
+            else:
+
+                #club_id =
+                print("else")
+
+        exit()
