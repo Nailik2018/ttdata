@@ -51,20 +51,13 @@ class Database():
 
         return result
 
-    def insertstatement(self, statement):
+    def insertstatement(self, statement, input):
 
-        cursor = self.mysql.cursor(prepared=True)
-        cursor.execute(statement)
+        cursor = self.mysql.cursor(prepared=True,)
+        cursor.execute(statement, input)
         self.mysql.commit()
 
-    def insertstatement2(self, statement, vals):
-
-        cursor = self.mysql.cursor(prepared=True)
-        insert_tuple = vals
-        cursor.execute(statement, insert_tuple)
-        self.mysql.commit()
-
-    def insertstatement3(self, statement, input):
+    def insertstatementMany(self, statement, input):
 
         cursor = self.mysql.cursor(prepared=True,)
         cursor.execute(statement, input)

@@ -3,13 +3,9 @@
 from Collections.CSVDownloadOfWebsite import CSVDownloadOfWebsite
 from Collections.helpfunctions.DataClean import DataClean
 from Collections.Database import Database
-from unidecode import unidecode
+from Collections.helpfunctions.tuple_to_list import tuple_to_list
 
 import json, ast
-
-import sys
-#reload(sys)
-#sys.setdefaultencoding("utf-8")
 
 class UpdateClickTTData():
 
@@ -35,57 +31,94 @@ class UpdateClickTTData():
         db = Database()
         db.connection()
 
-        #current_club = ("Rio-Star Muttenz",)
-
-        #is_club_in_table_club = db.sqlstatement("SELECT * FROM club WHERE clubname = %s", current_club)
+        male_id = 1
+        female_id = 2
 
         for male_player in male_players:
 
             current_club = (male_player['club'],)
+            lastname = male_player['lastname']
+            firstname = male_player['firstname']
+            licence_number = int(male_player['licence_number'])
+            new_elo_wert = male_player['new_elo_wert']
 
-            is_current_club_in_table_club = db.sqlstatement("SELECT * FROM club WHERE clubname = %s", current_club)
-
-            #encoded_club = male_player['club'].decode('utf-8')
-
-            c = male_player['club']
-            d = c.encode("utf-8")
-            u = {u'club': u'' + c}
-            e = format(c)
-
-            print(c)
-            print(d)
-            print(d.decode('utf-8'))
-            print(str(ast.literal_eval(json.dumps(u['club']))))
-            print(unidecode(c))
-            stdout_encoding = sys.stdout.encoding
-            print(stdout_encoding)
-            stdout_encoding = sys.stdout.encoding or sys.getfilesystemencoding()
-            print(stdout_encoding)
-
-            #f = str(c.decode('utf-8'), 'utf-8')
-            #print(f)
-
-
-
-
-            print("-" * 100)
-
+            # Club check ist Club nicht vorhanden wird dieser Club in die Clubtabelle geschrieben
+            is_current_club_in_table_club = db.sqlstatement("SELECT id, clubname FROM club WHERE clubname = %s", current_club)
 
             if not is_current_club_in_table_club:
 
-                #c = male_player['club'].encode('utf-8')
-                #print(c)
-
-                #print(unichr(241).encode('utf8'))
-
                 current_club = ('Null', male_player['club'])
-                #current_club = ('Null', encoded_club)
                 insert_statement = """INSERT INTO club (id, clubname) VALUES (%s, %s)"""
-                db.insertstatement3(insert_statement, current_club)
+                db.insertstatement(insert_statement, current_club)
+
+            if len(is_current_club_in_table_club) >= 1:
+                club = list(is_current_club_in_table_club[0])
+                club_id = club[0]
+                clubname = club[1]
+
+            # Player check ist Player nicht vorhanden wird dieser in die Playertabelle geschrieben
+            is_current_player_in_table_player = db.sqlstatement("SELECT * FROM player WHERE licenceNr = %s", (licence_number,))
+
+            if not is_current_player_in_table_player:
+
+                current_player = (licence_number, firstname, lastname, club_id, male_id)
+
+                print("if")
+                print(current_player)
+                insert_statement = ("INSERT INTO player "
+               "(licenceNr, firstname, lastname, clubID, genderID) "
+               "VALUES (%s, %s, %s, %s, %s)")
+                db.insertstatementMany(insert_statement, current_player)
 
             else:
 
-                #club_id =
                 print("else")
 
+                if len(is_current_player_in_table_player[0]) == 5:
+                    db_club_of_current_player = is_current_player_in_table_player[0][3]
+
+                    if club_id == db_club_of_current_player:
+                        print("same id")
+                    else:
+                        update_statement = "UPDATE player SET clubID = %s WHERE licenceNr = %s, (licence_number,)"
+                        db.sqlstatement(update_statement, club_id)
+                        print(str(club_id) + " und " + str(db_club_of_current_player) + " sind nicht identisch")
+                    print(db_club_of_current_player)
+
+            print(is_current_player_in_table_player)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         exit()
+
+        for female_player in female_players:
+
+            current_club = (female_player['club'],)
+
+            is_current_club_in_table_club = db.sqlstatement("SELECT * FROM club WHERE clubname = %s", current_club)
+
+            if not is_current_club_in_table_club:
+
+                current_club = ('Null', female_player['club'])
+                insert_statement = """INSERT INTO club (id, clubname) VALUES (%s, %s)"""
+                db.insertstatement(insert_statement, current_club)
