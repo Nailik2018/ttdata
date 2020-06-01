@@ -34,7 +34,7 @@ class Database():
             autocommit=True
         )
 
-    def sqlstatement(self, statement, values):
+    def sqlSelectStatement(self, statement, values):
 
         cursor = self.mysql.cursor()
         cursor.execute(statement, values)
@@ -52,7 +52,7 @@ class Database():
 
         return result
 
-    def updatestatement(self, statement, data):
+    def sqlUpdateStatement(self, statement, data):
 
         print(data)
         print("updatestatement()")
@@ -61,13 +61,13 @@ class Database():
         cursor.execute(statement, data)
         #cursor.commit()
 
-    def insertstatement(self, statement, input):
+    def sqlInsertStatement(self, statement, input):
 
         cursor = self.mysql.cursor(prepared=True,)
         cursor.execute(statement, input)
         self.mysql.commit()
 
-    def insertstatementMany(self, statement, input):
+    def sqlInsertStatementMany(self, statement, input):
 
         cursor = self.mysql.cursor(prepared=True,)
         cursor.execute(statement, input)
