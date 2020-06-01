@@ -30,7 +30,8 @@ class Database():
             host=localhost,
             user=user,
             passwd=password,
-            database=db
+            database=db,
+            autocommit=True
         )
 
     def sqlstatement(self, statement, values):
@@ -50,6 +51,15 @@ class Database():
         #result = tuple_to_list(result)
 
         return result
+
+    def updatestatement(self, statement, data):
+
+        print(data)
+        print("updatestatement()")
+
+        cursor = self.mysql.cursor()
+        cursor.execute(statement, data)
+        #cursor.commit()
 
     def insertstatement(self, statement, input):
 
