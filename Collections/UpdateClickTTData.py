@@ -12,9 +12,11 @@ def checkElo(db, licenceNr, month_as_id, year):
 
     check_elo = None
 
+    print(licenceNr, month_as_id, year)
+
     result = db.sqlSelectStatement("SELECT * FROM elos_archiv WHERE licenceNr = %s AND monthID = %s AND year = %s", (int(licenceNr), int(month_as_id), int(year)))
 
-    # check_elo True Spieler Monat Elowwert ist vorhanden
+    # check_elo True Spieler Monat Elowert ist vorhanden
     # check_elo False Spieler Monat Elowert nicht vorhanden
     if len(result) == 0:
         check_elo = False
@@ -36,7 +38,7 @@ def logik(db, players, gender_id):
         # Attribut Werte zuweisung des aktuellen Player aus der CSV Datei
         p_firstname = player['firstname']
         p_lastname = player['lastname']
-        p_licence_number = player['licence_number']
+        p_licence_number = player['licence_number'].replace("F", "")
         p_new_elo_wert = player['new_elo_wert']
         p_club = player['club']
 
@@ -99,7 +101,7 @@ def logik(db, players, gender_id):
 
                 print("Der Spieler " + p_firstname + " " + p_lastname + " mit der Lizenznummer " + str(p_licence_number) + " muss upgedatet werden!" )
                 update_data = (p_firstname, p_lastname, db_club_id, int(p_licence_number))
-                update_statement = """UPDATE player SET player.firstname=%s, player.lastname=%s, player.clubID=%s WHERE player.licenceNr = %s""";
+                update_statement = "UPDATE player SET player.firstname=%s, player.lastname=%s, player.clubID=%s WHERE player.licenceNr = %s";
                 db.sqlUpdateStatement(update_statement, update_data)
 
         else:
